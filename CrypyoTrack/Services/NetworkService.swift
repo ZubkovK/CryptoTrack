@@ -47,13 +47,16 @@ class NetworkService {
                 defer { dispatchGroup.leave() }
                 
                 if let error = error {
-                    print("Network error for symbol \(symbol): \(error)")
                     errors.append(error)
                     return
                 }
                 
                 guard let data = data else {
-                    print("No data received for symbol \(symbol)")
+                    let error = NSError(
+                        domain: "Network",
+                        code: 500,
+                        userInfo: [NSLocalizedDescriptionKey: "Ошибка загрузки данных"]
+                    )
                     return
                 }
                 
@@ -61,7 +64,6 @@ class NetworkService {
                     let coinData = try JSONDecoder().decode(CoinResponse.self, from: data)
                     results.append(coinData.coin)
                 } catch {
-                    print("Error decoding data for symbol \(symbol): \(error)")
                     errors.append(error)
                 }
             }
